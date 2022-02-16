@@ -20,20 +20,18 @@ Pass `manual` to `docker run` or `docker-compose` as a `command`.
 ## docker-compose
 ```
 services:
-  vaultwarden:
-    # Vaultwarden configuration here.
+  # vaultwarden:
+    # Vaultwarden configuration here, if you want
   backup:
     image: jmqm/vaultwarden_backup:latest
-    container_name: vaultwarden_backup
     network_mode: none
     volumes:
+      - /etc/localtime:/etc/localtime:ro     # Container uses date from host
       - /vaultwarden_data_directory:/data:ro # Read-only
       - /backup_directory:/backups
-
-      - /etc/localtime:/etc/localtime:ro # Container uses date from host.
     environment:
       - DELETE_AFTER=30
-      - CRON_TIME=* */24 * * * # Runs at 12:00 AM.
+      - CRON_TIME=0 */24 * * *               # Runs at every day 00:00
       - UID=1024
       - GID=100
 ```
