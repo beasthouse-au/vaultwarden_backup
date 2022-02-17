@@ -1,43 +1,35 @@
 #!/bin/sh
 
-# --------------- [ PREREQUISITES ] ---------------
+cd /data || { echo "Failed to enter folder '/data'"; exit 1; }
 
+DATETIME=$(date +"%F_%H-%M-%S")
 EXTENSION="tar.xz"
+BACKUP_LOCATION="/backups/${DATETIME}.${EXTENSION}"
 
+DB="db-${DATETIME}.sqlite3" # file
+RSA="rsa_key*" # files
+CONFIG="config.json" # file
+ATTACHMENTS="attachments" # directory
+SENDS="sends" # directory
 
-# ------------------ [ BACKUP ] ------------------
-
-cd /data
-
-BACKUP_LOCATION="/backups/$(date +"%F_%H-%M-%S").${EXTENSION}"
-
-BACKUP_DB="db.sqlite3" # file
-BACKUP_RSA="rsa_key*" # files
-BACKUP_CONFIG="config.json" # file
-BACKUP_ATTACHMENTS="attachments" # directory
-BACKUP_SENDS="sends" # directory
+# Create a properly sqlite backup
+sqlite3 db.sqlite3 ".backup ${DB}"
 
 # Back up files and folders.
-tar -Jcf $BACKUP_LOCATION $BACKUP_DB $BACKUP_RSA $BACKUP_CONFIG $BACKUP_ATTACHMENTS $BACKUP_SENDS 2>/dev/null
-
+tar caf $BACKUP_LOCATION $DB $RSA $CONFIG $ATTACHMENTS $SENDS 2>/dev/null
 OUTPUT="${OUTPUT}New backup created"
 
-
-# ------------------ [ DELETE ] ------------------
-
+# Check if should delete old backups
 if [ -n "$DELETE_AFTER" ] && [ "$DELETE_AFTER" -gt 0 ]; then
-    cd /backups
+  cd /backups
 
-    # Find all archives older than x days, store them in a variable, delete them.
-    TO_DELETE=$(find . -iname "*.${EXTENSION}" -type f -mtime +$DELETE_AFTER)
-    find . -iname "*.${EXTENSION}" -type f -mtime +$DELETE_AFTER -exec rm -f {} \;
+  # Find all archives older than x days, store them in a variable, delete them.
+  TO_DELETE=$(find . -iname "*.${EXTENSION}" -type f -mtime +$DELETE_AFTER)
+  find . -iname "*.${EXTENSION}" -type f -mtime +$DELETE_AFTER -exec rm -f {} \;
 
-    OUTPUT="${OUTPUT}, $([ ! -z "$TO_DELETE" ] \
-                       && echo "deleted $(echo "$TO_DELETE" | wc -l) archives older than ${DELETE_AFTER} days" \
-                       || echo "no archives older than ${DELETE_AFTER} days to delete")"
+  OUTPUT="${OUTPUT}, $([ ! -z "$TO_DELETE" ] \
+    && echo "deleted $(echo "$TO_DELETE" | wc -l) archives older than ${DELETE_AFTER} days" \
+    || echo "no archives older than ${DELETE_AFTER} days to delete")"
 fi
-
-
-# ------------------ [ EXIT ] ------------------
 
 echo "[$(date +"%F %r")] ${OUTPUT}."
