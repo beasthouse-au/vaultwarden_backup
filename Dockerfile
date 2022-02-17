@@ -3,10 +3,11 @@ FROM ${ARCH}alpine:latest
 
 RUN apk add --no-cache xz tzdata sqlite
 
+ENV TZ Europe/London
 ENV CRON_TIME "0 */12 * * *"
 ENV DELETE_AFTER 0
-VOLUME /backups
 
+VOLUME /backups
 WORKDIR /app
 COPY entrypoint.sh script.sh ./
 
