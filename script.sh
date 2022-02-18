@@ -6,7 +6,7 @@ DATETIME=$(date +"%F_%H-%M-%S")
 EXTENSION="tar.xz"
 BACKUP_LOCATION="/backups/${DATETIME}.${EXTENSION}"
 
-DB="db-${DATETIME}.sqlite3" # file
+DB="/app/db-${DATETIME}.sqlite3" # file
 RSA="rsa_key*" # files
 CONFIG="config.json" # file
 ATTACHMENTS="attachments" # directory
