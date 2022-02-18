@@ -1,29 +1,32 @@
 #!/bin/sh
 
-cd /data || { echo "Failed to enter folder '/data'"; exit 1; }
-
 DATETIME=$(date +"%F_%H-%M-%S")
 EXTENSION="tar.xz"
-BACKUP_LOCATION="/backups/${DATETIME}.${EXTENSION}"
+BACKUP_FILE="/backups/${DATETIME}.${EXTENSION}"
+TMP_BACKUP="/tmp/bkp.db" # needs write permission
 
-DB="/app/db-${DATETIME}.sqlite3" # file
-RSA="rsa_key*" # files
-CONFIG="config.json" # file
-ATTACHMENTS="attachments" # directory
-SENDS="sends" # directory
+DB="/data/db.sqlite3" # file
+RSA="/data/rsa_key*" # files
+CONFIG="/data/config.json" # file
+ATTACHMENTS="/data/attachments" # directory
+SENDS="/data/sends" # directory
 
 # Create a properly sqlite backup
-sqlite3 db.sqlite3 ".backup ${DB}"
+sqlite3 $DB ".backup $TMP_BACKUP"
 
-# Back up files and folders.
-tar caf $BACKUP_LOCATION $DB $RSA $CONFIG $ATTACHMENTS $SENDS 2>/dev/null
+# Backup files and folders
+tar -caf $BACKUP_FILE \
+  --transform "s,$TMP_BACKUP,$DB,;s,/data/,," \
+  --absolute-names --ignore-failed-read \
+  $TMP_BACKUP $RSA $CONFIG $ATTACHMENTS $SENDS
+
 OUTPUT="${OUTPUT}New backup created"
 
 # Check if should delete old backups
 if [ -n "$DELETE_AFTER" ] && [ "$DELETE_AFTER" -gt 0 ]; then
   cd /backups
 
-  # Find all archives older than x days, store them in a variable, delete them.
+  # Find all archives older than x days, store them in a variable, delete them
   TO_DELETE=$(find . -iname "*.${EXTENSION}" -type f -mtime +$DELETE_AFTER)
   find . -iname "*.${EXTENSION}" -type f -mtime +$DELETE_AFTER -exec rm -f {} \;
 

@@ -1,7 +1,7 @@
 ARG ARCH=
 FROM ${ARCH}alpine:latest
 
-RUN apk add --no-cache xz tzdata sqlite
+RUN apk add --no-cache tar xz tzdata sqlite
 
 ENV TZ Europe/London
 ENV CRON_TIME 0 */12 * * *
