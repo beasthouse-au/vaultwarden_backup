@@ -1,4 +1,4 @@
-> This is just a fork from [jmqm/vaultwarden_backup](https://github.com/jmqm/vaultwarden_backup) with some personal changes and build for arm64
+> This is just a fork from [jmqm/vaultwarden_backup](https://github.com/jmqm/vaultwarden_backup) with some personal changes
 
 ---
 
@@ -24,13 +24,23 @@ Refer to the `docker-compose` section below. By default, backing up is automatic
 
 Pass `manual` to `docker run` or `docker-compose` as a `command`.
 
+#### How to restore
+
+1. Stop the application
+1. Go to the *data* directory of **your** application ex. `cd /vaultwarden/data` (if that is my data folder)
+1. Delete the db.sqlite3-wal `rm db.sqlite3-wal` (you dont need it since the backup was created using `.backup`)
+1. Just extract `tar -xavf <backup-file.tar.xz>`
+1. Run the application
+
+You can read more in [the oficial wiki][how-restore]
+
 ## docker-compose
 
 ```
 services:
   # vaultwarden configuration here if you want share the docker-compose file
   backup:
-    image: fabricionaweb/vaultwarden_backup:latest
+    image: ghcr.io/fabricionaweb/vaultwarden_backup
     network_mode: none
     # user: "1000:1000"                      # PUID:PGID (change if necessary)
     environment:
@@ -56,3 +66,4 @@ services:
 
 [cron-format-wiki]: https://www.ibm.com/docs/en/db2oc?topic=task-unix-cron-format
 [cron-editor]: https://crontab.guru/
+[how-restore]: https://github.com/dani-garcia/vaultwarden/wiki/Backing-up-your-vault#restoring-backup-data
