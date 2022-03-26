@@ -1,6 +1,8 @@
 ARG ARCH=
 FROM ${ARCH}alpine:latest
 
+LABEL org.opencontainers.image.source = "https://github.com/fabricionaweb/vaultwarden_backup"
+
 RUN apk add --no-cache tar xz tzdata sqlite
 
 ENV TZ Europe/London
