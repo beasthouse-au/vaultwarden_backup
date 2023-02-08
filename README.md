@@ -27,9 +27,9 @@ Pass `manual` to `docker run` or `docker-compose` as a `command`.
 #### How to restore
 
 1. Stop the application
-1. Go to the *data* directory of **your** application ex. `cd /vaultwarden/data` (if that is my data folder)
+1. Go to the _data_ directory of **your** application ex. `cd /vaultwarden/data` (if that is my data folder)
 1. Delete the db.sqlite3-wal `rm db.sqlite3-wal` (you dont need it since the backup was created using `.backup`)
-1. Just extract `tar -xavf <backup-file.tar.xz>`
+1. Just extract `tar -xJvf <backup-file.tar.xz> -C /vaultwarden/data`
 1. Run the application
 
 You can read more in [the oficial wiki][how-restore]
