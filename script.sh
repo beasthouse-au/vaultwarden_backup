@@ -5,7 +5,7 @@ EXTENSION="tar.xz"
 BACKUP_FOLDER="/backups"
 BACKUP_FILE="$BACKUP_FOLDER/vaultwarden.${DATETIME}.${EXTENSION}"
 
-APP_DATA="/var/lib/vaultwarden"     # where the app is instaled at
+APP_DATA="/mnt/user/appdata/vaultwarden"     # where the app is instaled at
 DB="$APP_DATA/db.sqlite3"           # file
 RSA="$APP_DATA/rsa_key*"            # files
 CONFIG="$APP_DATA/config.json"      # file
